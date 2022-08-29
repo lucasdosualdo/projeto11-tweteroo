@@ -13,18 +13,12 @@ app.post("/sign-up", (req, res)=>{
 
     const signUp = req.body;
     const url = signUp.avatar.match(/^https?:\/\/.+\/.+$/);
-    const userName = users.find(user => user.username === signUp.username);
-
-    if (userName){
-        res.status(400).send("Nome de usuário já existente!");
-        console.log(users)
-        return;
-    }
+   
     if (!signUp.username || !signUp.avatar ){
         res.status(400).send("Todos os campos são obrigatórios!");
         return;
     } else if (!url){
-        res.status(400).send("Adicione um URL válida!");
+        res.status(400).send("Adicione uma URL válida!");
         return;
     }
    
@@ -43,10 +37,9 @@ app.post("/tweets", (req, res)=> {
         res.status(400).send("Nome de usuário inválido!");
         return;
     }
-    const avatarObj = users.find(user=>user.username===tweet.username);
-    const avatar = avatarObj.avatar;
-
-    let teste = [...tweets];
+    let infoUser = users.filter(user=>user.username===tweet.username);
+    infoUser = infoUser[infoUser.length-1];
+    const avatar = infoUser.avatar;
     tweets.push(
         {...tweet,
             avatar
