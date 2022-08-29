@@ -33,11 +33,6 @@ app.post("/sign-up", (req, res)=>{
     console.log(users);
 });
 
-app.get("/tweets", (req, res)=>{
-    res.send(tweets);
-    console.log('teste console')
-});
-
 app.post("/tweets", (req, res)=> {
     const tweet = req.body;
     if (!tweet.tweet ){
@@ -50,12 +45,22 @@ app.post("/tweets", (req, res)=> {
     }
     const avatarObj = users.find(user=>user.username===tweet.username);
     const avatar = avatarObj.avatar;
-
     tweets.push(
         {...tweet,
             avatar
     });
     res.status(201).send("Ok");
-})
+});
+
+app.get("/tweets", (req, res)=>{
+    let visibleTweets = [...tweets];
+    if (tweets.length > 10){
+        visibleTweets = visibleTweets.slice(visibleTweets.length-10);
+        res.send(visibleTweets);
+    }
+
+    res.send(tweets);
+    console.log('teste console')
+});
 
 app.listen(5000)
