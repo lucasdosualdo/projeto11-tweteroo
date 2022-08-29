@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 const users = [];
-const tweets = [];
+let tweets = [];
 
 app.post("/sign-up", (req, res)=>{
 
@@ -45,17 +45,21 @@ app.post("/tweets", (req, res)=> {
     }
     const avatarObj = users.find(user=>user.username===tweet.username);
     const avatar = avatarObj.avatar;
+
+    let teste = [...tweets];
     tweets.push(
         {...tweet,
             avatar
     });
+    tweets.splice(0, 0, tweets[tweets.length-1]);
+    tweets.splice(tweets.length-1, 1);
     res.status(201).send("Ok");
 });
 
 app.get("/tweets", (req, res)=>{
     let visibleTweets = [...tweets];
     if (tweets.length > 10){
-        visibleTweets = visibleTweets.slice(visibleTweets.length-10);
+        visibleTweets = visibleTweets.slice(0, 10);
         res.send(visibleTweets);
     }
 
