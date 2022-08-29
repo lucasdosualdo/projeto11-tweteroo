@@ -7,31 +7,55 @@ app.use(cors());
 app.use(express.json());
 
 const users = [];
+const tweets = [];
 
 app.post("/sign-up", (req, res)=>{
+
     const signUp = req.body;
-    
-    function isURL (url){
-        if (url.match(/^https?:\/\/.+\/.+$/)){
-            return true;
-        } else {
-            return false;
-        }
+    const url = signUp.avatar.match(/^https?:\/\/.+\/.+$/);
+    const userName = users.find(user => user.username === signUp.username);
+
+    if (userName){
+        res.status(400).send("Nome de usuário já existente!");
+        console.log(users)
+        return;
     }
-   
-    if (!signUp.username || !signUp.avatar){
+    if (!signUp.username || !signUp.avatar ){
         res.status(400).send("Todos os campos são obrigatórios!");
         return;
-    } else if (!isURL(signUp.avatar)){
+    } else if (!url){
         res.status(400).send("Adicione um URL válida!");
+        return;
     }
+   
     users.push(signUp);
     res.status(201).send("Ok");
-})
+    console.log(users);
+});
 
 app.get("/tweets", (req, res)=>{
-    res.send('teste');
+    res.send(tweets);
     console.log('teste console')
+});
+
+app.post("/tweets", (req, res)=> {
+    const tweet = req.body;
+    if (!tweet.tweet ){
+        res.status(400).send("Digite um tweet!");
+        return;
+    }
+    if (!users.find(user=>user.username===tweet.username)){
+        res.status(400).send("Nome de usuário inválido!");
+        return;
+    }
+    const avatarObj = users.find(user=>user.username===tweet.username);
+    const avatar = avatarObj.avatar;
+
+    tweets.push(
+        {...tweet,
+            avatar
+    });
+    res.status(201).send("Ok");
 })
 
 app.listen(5000)
